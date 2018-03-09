@@ -35,5 +35,10 @@ jobs:
         
       # run tests!
       - run: yarn test
-
+  deploy:
+    branches:
+      only: 
+        - master
+    steps: 
+      - run: ./build/publish_rc.sh
 
