@@ -1,0 +1,21 @@
+machine:
+  node:
+    version: 8.6.0
+  post:
+     - npm install -g npm@5.4.0
+dependencies:
+  pre:
+    - ./build/setup_npm.sh
+  override:
+    - npm install
+  post:
+    - npm run build
+deployment:
+  rc:
+    branch: [master]
+    commands:
+      - ./build/publish_rc.sh
+  release:
+    tag: /release-.*/
+    commands:
+      - ./build/publish_release.sh

@@ -1,0 +1,32 @@
+{
+  "name": "chast",
+  "version": "1.3.1",
+  "description": "Usage:",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "dir-babel --src-dir src --out-dir lib",
+    "test": "jest",
+    "debug": "node --debug",
+    "std-version": "standard-version -m \"chore(release): version %s build ${CIRCLE_BUILD_NUM} [ci skip]\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dir-babel": "^1.0.14",
+    "lodash": "^4.17.5",
+    "regenerator-runtime": "^0.11.1",
+    "remark": "^9.0.0",
+    "remark-parse": "^5.0.0",
+    "remark-rehype": "^3.0.0",
+    "semver": "^5.5.0",
+    "standard-version": "^4.3.0",
+    "unified": "^6.1.6",
+    "vfile-reporter": "^4.0.0"
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "jest": "^22.4.2"
+  }
+}
