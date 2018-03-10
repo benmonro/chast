@@ -32,8 +32,8 @@ jobs:
       # run tests!
       - run: yarn test
   deploy:
-    machine:
-        enabled: true
+    docker:
+      - image: circleci/node:8.6
     working_directory: ~/repo
 
     steps:
