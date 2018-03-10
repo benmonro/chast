@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.2-beta.3"></a>
+## [1.4.2-beta.3](https://github.com/benmonro/chast/compare/v1.4.2-beta.2...v1.4.2-beta.3) (2018-03-10)
+
+
+### Bug Fixes
+
+* switching back to npm just for deploy ([adf2de5](https://github.com/benmonro/chast/commit/adf2de5))
+
+
+
 <a name="1.4.2-beta.2"></a>
 ## [1.4.2-beta.2](https://github.com/benmonro/chast/compare/v1.4.2-beta.1...v1.4.2-beta.2) (2018-03-10)
 
