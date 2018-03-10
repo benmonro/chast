@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.3"></a>
+## [1.4.3](https://github.com/benmonro/chast/compare/v1.4.2...v1.4.3) (2018-03-10)
+
+
+### Bug Fixes
+
+* simplifying deploy, damn it's late ([8f7a032](https://github.com/benmonro/chast/commit/8f7a032))
+
+
+
 <a name="1.4.2"></a>
 ## [1.4.2](https://github.com/benmonro/chast/compare/v1.4.2-beta.3...v1.4.2) (2018-03-10)
 
