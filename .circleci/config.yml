@@ -43,7 +43,7 @@ jobs:
           command: bash ./build/setup_npm.sh
 
       - run:
-          command: ./build/publish_rc.sh
+          command: $([ "$CIRCLE_BRANCH" == 'master' ] && ./build/publish_rc.sh || ./build/publish_release.sh)
 workflows:
   version: 2
   build-and-deploy:
@@ -54,4 +54,6 @@ workflows:
             - build
           filters:
             branches:
-              only: master
+              only: 
+              - master
+              - /release-.*/
