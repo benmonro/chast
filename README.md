@@ -1,13 +1,3 @@
-# Chast - 
-Usage:
-
-```javascript
-    import {parse} from 'chast';
-    
-    const changeLog = parse('...');
-
-    const {versions} = changeLog;
-```
 [![npm][npm-img]][npm-url] [![CircleCI](https://circleci.com/gh/benmonro/chast.svg?style=svg)](https://circleci.com/gh/benmonro/chast)[![downloads][downloads-img]][npm-url]
 
 semver and standard-version based changelog parser using remark.
