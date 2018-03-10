@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.2-beta.1"></a>
+## [1.4.2-beta.1](https://github.com/benmonro/chast/compare/v1.4.2-beta.0...v1.4.2-beta.1) (2018-03-10)
+
+
+### Bug Fixes
+
+* updated README ([ec711ea](https://github.com/benmonro/chast/commit/ec711ea))
+
+
+
 <a name="1.4.2-beta.0"></a>
 ## [1.4.2-beta.0](https://github.com/benmonro/chast/compare/v1.4.1...v1.4.2-beta.0) (2018-03-10)
 
