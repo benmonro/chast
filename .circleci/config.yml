@@ -40,10 +40,10 @@ jobs:
       - checkout
       - run:
           name: Setup npm
-          command: bash deploy/setup_npm.sh
+          command: bash ./build/setup_npm.sh
 
       - run:
-          command: deploy/publish_rc.sh
+          command: ./build/publish_rc.sh
 workflows:
   version: 2
   build-and-deploy:
