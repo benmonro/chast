@@ -1,4 +1,6 @@
-[![npm][npm-img]][npm-url] [![CircleCI](https://circleci.com/gh/benmonro/chast.svg?style=svg)](https://circleci.com/gh/benmonro/chast)[![downloads][downloads-img]][npm-url]
+[![npm][npm-img]][npm-url] [![CircleCI](https://img.shields.io/circleci/project/github/RedSparr0w/node-csgo-parser.svg)](https://circleci.com/gh/benmonro/chast)[![downloads][downloads-img]][npm-url]
+[![GitHub issues](https://img.shields.io/github/issues-raw/badges/shields.svg)](https://github.com/benmonro/chast/issues)
+
 
 semver and standard-version based changelog parser using remark.
 
@@ -9,7 +11,7 @@ semver and standard-version based changelog parser using remark.
 ## Install
 
 ```
-yarn install chast
+yarn add chast
 ```
 
 ## Usage
