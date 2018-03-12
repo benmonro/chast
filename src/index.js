@@ -26,7 +26,6 @@ const isVersionLink = node => {
   return isHtml(child) && child.value.match(versionRegEx);
 };
 export const parse = content => {
-  return new Promise((resolve, reject) => {
     const ast = parents(remark.parse(content));
     let versions = [];
     let currVersion = find(ast, isVersionLink);
@@ -80,8 +79,8 @@ export const parse = content => {
 
     let { children: [{ children: [{ value: title }] }] } = ast;
 
-    let chast = u('changeLog', {title}, versions);
+    return u('changeLog', {title}, versions);
 
-    resolve(chast);
-  });
+    
+
 };
