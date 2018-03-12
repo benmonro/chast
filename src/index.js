@@ -1,63 +1,74 @@
-import unified from 'unified';
-import markdown from 'remark-parse';
-import remark2rehype from 'remark-rehype';
-import remark from 'remark';
-import report from 'vfile-reporter';
-import { valid } from 'semver';
-import {camelCase} from 'lodash';
+import unified from "unified";
+import markdown from "remark-parse";
+import remark2rehype from "remark-rehype";
+import remark from "remark";
+import report from "vfile-reporter";
+import { valid } from "semver";
+import { camelCase } from "lodash";
+import find from "unist-util-find";
+import findAfter from "unist-util-find-after";
+import findAllBetween from "unist-util-find-all-between";
+import findAllAfter from "unist-util-find-all-after";
+import visitChildren from "unist-util-visit-children";
+import { isLink, isHtml, isList } from "remark-helpers";
+import inspect from "unist-util-inspect";
 
-let regeneratorRuntime = require('regenerator-runtime');
+let regeneratorRuntime = require("regenerator-runtime");
 const versionRegEx = /<a +name="(.*)">/i;
 
+const isVersionLink = node => {
+  if (!node.children || node.children.length == 0) {
+    return false;
+  }
+  let child = node.children[0];
+  return isHtml(child) && child.value.match(versionRegEx);
+};
+export const parse = content => {
+  return new Promise((resolve, reject) => {
+    const ast = remark.parse(content);
+    let versions = [];
+    let currVersion = find(ast, isVersionLink);
+    do {
+      let nextVersion = findAfter(ast, currVersion, isVersionLink);
 
-export const parse = (content) => {
-    return new Promise((resolve, reject) => {
-        const ast = remark.parse(content);
+      let [, version] = currVersion.children[0].value.match(versionRegEx);
 
-        let versions = ast.children.reduce((prev, curr, i) => {
+      let nodesBetween;
 
-            let { children: [{ type, value }] } = curr;
-            if (type === 'html') {
-                let [, version] = value.match(versionRegEx);
-                if (version && valid(version)) {
+      if (nextVersion === null) {
+        nodesBetween = [currVersion, ...findAllAfter(ast, currVersion)];
+      } else {
+        nodesBetween = findAllBetween(
+          ast,
+          currVersion,
+          nextVersion || ast.children[ast.children.length - 1]
+        );
+      }
+      let items = {};
+      for (let i = 2; i < nodesBetween.length; i += 2) {
+        const type = camelCase(nodesBetween[i].children[0].value);
+        let list = [];
+        const nextNode = nodesBetween[i + 1];
+        if (nextNode && isList(nextNode)) {
+          const visit = visitChildren(node => {
+            // let listItem = find(nodesBetween[i+1], {type:"listItem"});
 
-                    let items = {};
-                    let nextVersion = ast.children.slice(i + 1).findIndex(({ children: [{ type, value }] }) => {
-                        return type === 'html' && value.match(versionRegEx);
-                    });
+            list.push(find(node, { type: "text" }).value.trim());
+          });
+          visit(nextNode);
+        }
+        if (!items[type]) {
+          items[type] = [];
+        }
 
-                    if (nextVersion < 0) {
-                        nextVersion = ast.children.length - 1;
-                    } else {
-                        nextVersion += i + 1;
-                    }
+        items[type].push(...list);
+      }
+      versions.push({ version, ...items });
 
-                    for (let j = i + 1; j < nextVersion; j++) {
+      currVersion = nextVersion;
+    } while (currVersion);
 
-                        let { type: childType, depth, children: [value] } = ast.children[j];
-
-                        if (depth === 3) {
-
-                            const { children: [{ value: name }] } = ast.children[j];
-
-                            const list = ast.children[j + 1];
-
-                            items[camelCase(name)] = list.children.map(({ children: [{ children: [{ value }] }] }) => value.trim());
-
-                        }
-                        // console.log(ast.children[j]);
-                    }
-
-
-                    return [...prev, { version, ...items }]
-                }
-
-            }
-            return [...prev];
-        }, [])
-
-        let { children: [{ children: [{ value: title }] }] } = ast;
-        resolve({ title, versions });
-
-    })
-}
+    let { children: [{ children: [{ value: title }] }] } = ast;
+    resolve({ title, versions });
+  });
+};

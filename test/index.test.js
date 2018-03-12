@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* Added a cool button [#179](https://github.com/bmonro/blah) [210f4fa](https://github.com/bmonro/chast/commit/210f4fa)
+* Added a cool button [#179](https://github.com/bmonro/chast) [210f4fa](https://github.com/bmonro/chast/commit/210f4fa)
 
 
 
@@ -24,12 +24,12 @@ All notable changes to this project will be documented in this file. See [standa
 * removed typeo from button text. [#178](https://github.com/bmonro/chast/issues/178) ([cc9ca61](https://github.com/bmonro/chast/commit/cc9ca61))
 
 <a name="8.0.0-rc.0"></a>
-# [8.0.0-rc.0](https://github.concur.com/nui/nui-shell/compare/v7.6.0-rc.1...v8.0.0-rc.0) (2018-01-11)
+# [8.0.0-rc.0](https://github.com/benmonro/chast/compare/v7.6.0-rc.1...v8.0.0-rc.0) (2018-01-11)
 
 
 ### Features
 
-* static assets from multiple CDNs. ([#164](https://github.concur.com/nui/nui-shell/issues/164)) ([7d32d77](https://github.concur.com/nui/nui-shell/commit/7d32d77))
+* static assets from multiple CDNs. ([#164](https://github.com/benmonro/chast/commit/7d32d77))
 
 
 ### BREAKING CHANGES
@@ -87,7 +87,6 @@ describe("index", () => {
 
 
     test('returns breaking changes and features in 3rd version', () => {
-        debugger;
         const {versions:[,,{features,breakingChanges}]} = result;
         expect(features.length).toBe(1);
         expect(breakingChanges.length).toBe(9);
