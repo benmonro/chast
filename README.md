@@ -20,7 +20,7 @@ This module exports a single function. It supports both callbacks and promises.
 ```js
     import {parse} from 'chast';
     
-    const changeLog = parse(`
+    const ast = parse(`
 # Change Log
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
@@ -41,8 +41,7 @@ All notable changes to this project will be documented in this file. See [standa
 * suport for simple changelog ([b925ca7](https://github.com/benmonro/chast/commit/b925ca7))
     `);
 
-    const {versions} = changeLog;
     
-    console.log(versions);
+    console.log(ast);
 ```
 
