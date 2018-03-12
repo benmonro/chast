@@ -15,8 +15,6 @@ yarn add chast
 
 ## Usage
 
-This module exports a single function. It supports both callbacks and promises.
-
 ```js
     import {parse} from 'chast';
     
