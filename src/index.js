@@ -10,8 +10,10 @@ import findAfter from "unist-util-find-after";
 import findAllBetween from "unist-util-find-all-between";
 import findAllAfter from "unist-util-find-all-after";
 import visitChildren from "unist-util-visit-children";
+import parents from 'unist-util-parents';
 import { isLink, isHtml, isList } from "remark-helpers";
 import inspect from "unist-util-inspect";
+import u from 'unist-builder';
 
 let regeneratorRuntime = require("regenerator-runtime");
 const versionRegEx = /<a +name="(.*)">/i;
@@ -25,7 +27,7 @@ const isVersionLink = node => {
 };
 export const parse = content => {
   return new Promise((resolve, reject) => {
-    const ast = remark.parse(content);
+    const ast = parents(remark.parse(content));
     let versions = [];
     let currVersion = find(ast, isVersionLink);
     do {
@@ -51,9 +53,9 @@ export const parse = content => {
         const nextNode = nodesBetween[i + 1];
         if (nextNode && isList(nextNode)) {
           const visit = visitChildren(node => {
-            // let listItem = find(nodesBetween[i+1], {type:"listItem"});
-
-            list.push(find(node, { type: "text" }).value.trim());
+            let text = find(node, { type: "text" });
+            let rest = findAllAfter(text.parent, text);
+            list.push(u('changeItem',{text: text.value.trim()}, rest));
           });
           visit(nextNode);
         }
@@ -63,12 +65,17 @@ export const parse = content => {
 
         items[type].push(...list);
       }
-      versions.push({ version, ...items });
+      versions.push(
+          u('versionEntry', {semver:version}, Object.keys(items).map(type => u(type, items[type])))
+      );
 
       currVersion = nextVersion;
     } while (currVersion);
 
     let { children: [{ children: [{ value: title }] }] } = ast;
-    resolve({ title, versions });
+
+    let chast = u('changeLog', {title}, versions);
+
+    resolve(chast);
   });
 };

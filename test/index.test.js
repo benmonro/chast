@@ -1,4 +1,7 @@
-import {parse} from '../src'
+import {parse} from '../src';
+import find from 'unist-util-find';
+import parents from 'unist-util-parents';
+
 
 const simpleChangeLog = `
 # Change Log
@@ -50,12 +53,12 @@ All notable changes to this project will be documented in this file. See [standa
 * do not use getLessCdnUrl  from ui-assets, use getCssUrl from nui-shell.
 
 * updating package-lock.js
-`
+`;
 
 describe("index", () => {
     let result;
     beforeEach(async()=> {
-        result = await parse(simpleChangeLog);
+        result = parents(await parse(simpleChangeLog));
         return result;
     });
     test('exports parser', () => {
@@ -68,27 +71,28 @@ describe("index", () => {
     });
 
     test('returns 8.2.0 in first version', () => {
-        const {versions} = result;
-        expect(versions[0].version).toBe("8.2.0");
+        const version = find(result, {type: 'versionEntry'});
+
+        expect(version.semver).toBe("8.2.0");
     });
 
     test('returns Features in first version', () => {
-        const {versions:[{features}]} = result;
-        expect(features.length).toBe(1);
-        expect(features[0]).toEqual('Added a cool button');
+        const {children:[firstChange]} = result;
+        expect(firstChange.children.length).toBe(1);
+        expect(find(firstChange, {type: "changeItem"}).text).toEqual('Added a cool button');
     });
 
     test('returns bug fixes in 2nd version',() => {
-        const {versions:[,{bugFixes}]} = result;
-
-        expect(bugFixes.length).toBe(1);
-        expect(bugFixes[0]).toEqual('removed typeo from button text.');
+        const bugFixes = find((result), {type:'bugFixes'});
+        expect(bugFixes.children.length).toBe(1);
+        expect(bugFixes.children[0].text).toEqual('removed typeo from button text.');
     });
 
 
     test('returns breaking changes and features in 3rd version', () => {
-        const {versions:[,,{features,breakingChanges}]} = result;
-        expect(features.length).toBe(1);
-        expect(breakingChanges.length).toBe(9);
+        let breakingChanges = find(result, {type:"breakingChanges"});
+        let features = find(breakingChanges.parent, {type:"features"});
+        expect(features.children.length).toBe(1);
+        expect(breakingChanges.children.length).toBe(9);
     });
 })
