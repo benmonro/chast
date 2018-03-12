@@ -46,27 +46,33 @@ export const parse = content => {
           nextVersion || ast.children[ast.children.length - 1]
         );
       }
-      let items = {};
+      let categories = {};
       for (let i = 2; i < nodesBetween.length; i += 2) {
-        const type = (nodesBetween[i].children[0].value);
+        const category = (nodesBetween[i].children[0].value);
         let list = [];
         const nextNode = nodesBetween[i + 1];
         if (nextNode && isList(nextNode)) {
           const visit = visitChildren(node => {
-            let text = find(node, { type: "text" });
-            let rest = findAllAfter(text.parent, text);
-            list.push(u('changeItem',{text: text.value.trim()}, rest));
+            let textNode = find(node, { type: "text" });
+            let rest = findAllAfter(textNode.parent, textNode);
+            let text = textNode.value.trim();
+            
+            if(text.endsWith('(')) {
+              rest = [u('text', {value:'('}), ...rest];
+              text = text.slice(0,-1);
+            }
+            list.push(u('changeItem',{text}, rest));
           });
           visit(nextNode);
         }
-        if (!items[type]) {
-          items[type] = [];
+        if (!categories[category]) {
+          categories[category] = [];
         }
 
-        items[type].push(...list);
+        categories[category].push(...list);
       }
       versions.push(
-          u('versionEntry', {semver:version}, Object.keys(items).map(type => u(type, items[type])))
+          u('versionEntry', {semver:version}, Object.keys(categories).map(category => u(camelCase(category),{text:category}, categories[category])))
       );
 
       currVersion = nextVersion;
