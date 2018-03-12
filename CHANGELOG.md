@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.4"></a>
+## [1.5.4](https://github.com/benmonro/chast/compare/v1.5.3...v1.5.4) (2018-03-12)
+
+
+### Bug Fixes
+
+* restore cache in deploy ([7a09261](https://github.com/benmonro/chast/commit/7a09261))
+* yarn build to ensure lib in package ([06d54ea](https://github.com/benmonro/chast/commit/06d54ea))
+
+
+
 <a name="1.5.3"></a>
 ## [1.5.3](https://github.com/benmonro/chast/compare/v1.5.2...v1.5.3) (2018-03-12)
 
