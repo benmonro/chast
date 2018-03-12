@@ -1,63 +1,87 @@
-import unified from 'unified';
-import markdown from 'remark-parse';
-import remark2rehype from 'remark-rehype';
-import remark from 'remark';
-import report from 'vfile-reporter';
-import { valid } from 'semver';
-import {camelCase} from 'lodash';
+import unified from "unified";
+import markdown from "remark-parse";
+import remark2rehype from "remark-rehype";
+import remark from "remark";
+import report from "vfile-reporter";
+import { valid } from "semver";
+import { camelCase } from "lodash";
+import find from "unist-util-find";
+import findAfter from "unist-util-find-after";
+import findAllBetween from "unist-util-find-all-between";
+import findAllAfter from "unist-util-find-all-after";
+import visitChildren from "unist-util-visit-children";
+import parents from 'unist-util-parents';
+import { isLink, isHtml, isList } from "remark-helpers";
+import inspect from "unist-util-inspect";
+import u from 'unist-builder';
 
-let regeneratorRuntime = require('regenerator-runtime');
+let regeneratorRuntime = require("regenerator-runtime");
 const versionRegEx = /<a +name="(.*)">/i;
 
+const isVersionLink = node => {
+  if (!node.children || node.children.length == 0) {
+    return false;
+  }
+  let child = node.children[0];
+  return isHtml(child) && child.value.match(versionRegEx);
+};
+export const parse = content => {
+  return new Promise((resolve, reject) => {
+    const ast = parents(remark.parse(content));
+    let versions = [];
+    let currVersion = find(ast, isVersionLink);
+    do {
+      let nextVersion = findAfter(ast, currVersion, isVersionLink);
 
-export const parse = (content) => {
-    return new Promise((resolve, reject) => {
-        const ast = remark.parse(content);
+      let [, version] = currVersion.children[0].value.match(versionRegEx);
 
-        let versions = ast.children.reduce((prev, curr, i) => {
+      let nodesBetween;
 
-            let { children: [{ type, value }] } = curr;
-            if (type === 'html') {
-                let [, version] = value.match(versionRegEx);
-                if (version && valid(version)) {
-
-                    let items = {};
-                    let nextVersion = ast.children.slice(i + 1).findIndex(({ children: [{ type, value }] }) => {
-                        return type === 'html' && value.match(versionRegEx);
-                    });
-
-                    if (nextVersion < 0) {
-                        nextVersion = ast.children.length - 1;
-                    } else {
-                        nextVersion += i + 1;
-                    }
-
-                    for (let j = i + 1; j < nextVersion; j++) {
-
-                        let { type: childType, depth, children: [value] } = ast.children[j];
-
-                        if (depth === 3) {
-
-                            const { children: [{ value: name }] } = ast.children[j];
-
-                            const list = ast.children[j + 1];
-
-                            items[camelCase(name)] = list.children.map(({ children: [{ children: [{ value }] }] }) => value.trim());
-
-                        }
-                        // console.log(ast.children[j]);
-                    }
-
-
-                    return [...prev, { version, ...items }]
-                }
-
+      if (nextVersion === null) {
+        nodesBetween = [currVersion, ...findAllAfter(ast, currVersion)];
+      } else {
+        nodesBetween = findAllBetween(
+          ast,
+          currVersion,
+          nextVersion || ast.children[ast.children.length - 1]
+        );
+      }
+      let categories = {};
+      for (let i = 2; i < nodesBetween.length; i += 2) {
+        const category = (nodesBetween[i].children[0].value);
+        let list = [];
+        const nextNode = nodesBetween[i + 1];
+        if (nextNode && isList(nextNode)) {
+          const visit = visitChildren(node => {
+            let textNode = find(node, { type: "text" });
+            let rest = findAllAfter(textNode.parent, textNode);
+            let text = textNode.value.trim();
+            
+            if(text.endsWith('(')) {
+              rest = [u('text', {value:'('}), ...rest];
+              text = text.slice(0,-1);
             }
-            return [...prev];
-        }, [])
+            list.push(u('changeItem',{text}, rest));
+          });
+          visit(nextNode);
+        }
+        if (!categories[category]) {
+          categories[category] = [];
+        }
 
-        let { children: [{ children: [{ value: title }] }] } = ast;
-        resolve({ title, versions });
+        categories[category].push(...list);
+      }
+      versions.push(
+          u('versionEntry', {semver:version}, Object.keys(categories).map(category => u(camelCase(category),{text:category}, categories[category])))
+      );
 
-    })
-}
+      currVersion = nextVersion;
+    } while (currVersion);
+
+    let { children: [{ children: [{ value: title }] }] } = ast;
+
+    let chast = u('changeLog', {title}, versions);
+
+    resolve(chast);
+  });
+};
