@@ -48,7 +48,7 @@ export const parse = content => {
       }
       let items = {};
       for (let i = 2; i < nodesBetween.length; i += 2) {
-        const type = camelCase(nodesBetween[i].children[0].value);
+        const type = (nodesBetween[i].children[0].value);
         let list = [];
         const nextNode = nodesBetween[i + 1];
         if (nextNode && isList(nextNode)) {
