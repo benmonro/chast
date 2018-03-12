@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/benmonro/chast/compare/v1.4.4...v1.5.0) (2018-03-12)
+
+
+### Features
+
+* ast support ([630a6c8](https://github.com/benmonro/chast/commit/630a6c8))
+* parse now returns ast. ([0037942](https://github.com/benmonro/chast/commit/0037942))
+
+
+
 <a name="1.4.4"></a>
 ## [1.4.4](https://github.com/benmonro/chast/compare/v1.4.3...v1.4.4) (2018-03-10)
 
