@@ -1,7 +1,6 @@
 #!/bin/bash
 
 
-npm install --production
-npm run std-version
+yarn std-version
 git push --follow-tags origin ${CIRCLE_BRANCH}
 npm publish --tag latest
