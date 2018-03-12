@@ -1,8 +1,7 @@
 [![npm][npm-img]][npm-url] [![CircleCI](https://img.shields.io/circleci/project/github/RedSparr0w/node-csgo-parser.svg)](https://circleci.com/gh/benmonro/chast)[![downloads][downloads-img]][npm-url]
 [![GitHub issues](https://img.shields.io/github/issues-raw/badges/shields.svg)](https://github.com/benmonro/chast/issues)
 
-
-semver and standard-version based changelog parser using remark.
+An AST parser for CHANGELOG files using [semver](https://github.com/npm/node-semver) and [standard-version](https://github.com/conventional-changelog/standard-version) based on [remark](https://github.com/remarkjs/remark).
 
 [npm-img]: https://img.shields.io/npm/v/chast.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/chast
