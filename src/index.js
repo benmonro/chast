@@ -10,10 +10,10 @@ import findAfter from "unist-util-find-after";
 import findAllBetween from "unist-util-find-all-between";
 import findAllAfter from "unist-util-find-all-after";
 import visitChildren from "unist-util-visit-children";
-import parents from 'unist-util-parents';
+import parents from "unist-util-parents";
 import { isLink, isHtml, isList } from "remark-helpers";
 import inspect from "unist-util-inspect";
-import u from 'unist-builder';
+import u from "unist-builder";
 
 let regeneratorRuntime = require("regenerator-runtime");
 const versionRegEx = /<a +name="(.*)">/i;
@@ -26,61 +26,66 @@ const isVersionLink = node => {
   return isHtml(child) && child.value.match(versionRegEx);
 };
 export const parse = content => {
-    const ast = parents(remark.parse(content));
-    let versions = [];
-    let currVersion = find(ast, isVersionLink);
-    do {
-      let nextVersion = findAfter(ast, currVersion, isVersionLink);
+  const ast = parents(remark.parse(content));
+  let versions = [];
+  let currVersion = find(ast, isVersionLink);
+  do {
+    let nextVersion = findAfter(ast, currVersion, isVersionLink);
 
-      let [, version] = currVersion.children[0].value.match(versionRegEx);
+    let [, version] = currVersion.children[0].value.match(versionRegEx);
 
-      let nodesBetween;
+    let nodesBetween;
 
-      if (nextVersion === null) {
-        nodesBetween = [currVersion, ...findAllAfter(ast, currVersion)];
-      } else {
-        nodesBetween = findAllBetween(
-          ast,
-          currVersion,
-          nextVersion || ast.children[ast.children.length - 1]
-        );
-      }
-      let categories = {};
-      for (let i = 2; i < nodesBetween.length; i += 2) {
-        const category = (nodesBetween[i].children[0].value);
-        let list = [];
-        const nextNode = nodesBetween[i + 1];
-        if (nextNode && isList(nextNode)) {
-          const visit = visitChildren(node => {
-            let textNode = find(node, { type: "text" });
+    if (nextVersion === null) {
+      nodesBetween = [currVersion, ...findAllAfter(ast, currVersion)];
+    } else {
+      nodesBetween = findAllBetween(
+        ast,
+        currVersion,
+        nextVersion || ast.children[ast.children.length - 1]
+      );
+    }
+    let categories = {};
+    for (let i = 2; i < nodesBetween.length; i += 2) {
+      const category = nodesBetween[i].children[0].value;
+      let list = [];
+      const nextNode = nodesBetween[i + 1];
+      if (nextNode && isList(nextNode)) {
+        const visit = visitChildren(node => {
+          let textNode = find(node, { type: "text" });
+          if (textNode) {
             let rest = findAllAfter(textNode.parent, textNode);
             let text = textNode.value.trim();
-            
-            if(text.endsWith('(')) {
-              rest = [u('text', {value:'('}), ...rest];
-              text = text.slice(0,-1);
+
+            if (text.endsWith("(")) {
+              rest = [u("text", { value: "(" }), ...rest];
+              text = text.slice(0, -1);
             }
-            list.push(u('changeItem',{text}, rest));
-          });
-          visit(nextNode);
-        }
-        if (!categories[category]) {
-          categories[category] = [];
-        }
-
-        categories[category].push(...list);
+            list.push(u("changeItem", { text }, rest));
+          }
+        });
+        visit(nextNode);
       }
-      versions.push(
-          u('versionEntry', {semver:version}, Object.keys(categories).map(category => u(camelCase(category),{text:category}, categories[category])))
-      );
+      if (!categories[category]) {
+        categories[category] = [];
+      }
 
-      currVersion = nextVersion;
-    } while (currVersion);
+      categories[category].push(...list);
+    }
+    versions.push(
+      u(
+        "versionEntry",
+        { semver: version },
+        Object.keys(categories).map(category =>
+          u(camelCase(category), { text: category }, categories[category])
+        )
+      )
+    );
 
-    let { children: [{ children: [{ value: title }] }] } = ast;
+    currVersion = nextVersion;
+  } while (currVersion);
 
-    return u('changeLog', {title}, versions);
+  let { children: [{ children: [{ value: title }] }] } = ast;
 
-    
-
+  return u("changeLog", { title }, versions);
 };
